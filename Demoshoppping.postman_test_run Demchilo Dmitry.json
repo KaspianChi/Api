@@ -1,0 +1,305 @@
+{
+	"id": "f780168f-e4b4-434c-9752-67e4dc4b5967",
+	"name": "Demoshoppping",
+	"timestamp": "2025-01-20T19:14:47.689Z",
+	"collection_id": "40956819-216f52c6-d528-46fa-8808-02b47835cfc9",
+	"folder_id": 0,
+	"environment_id": "40956819-ed848aa2-fbd9-4ca2-9280-a46660d6709c",
+	"totalPass": 15,
+	"delay": 0,
+	"persist": true,
+	"status": "error",
+	"startedAt": "2025-01-20T19:14:43.825Z",
+	"totalFail": 3,
+	"results": [
+		{
+			"id": "7c4eeaff-743e-4358-be8a-74d479368d82",
+			"name": "add products",
+			"url": "add-product",
+			"time": 443,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Response body is not empty": true,
+				"Status code is 200": true
+			},
+			"testPassFailCounts": {
+				"Response body is not empty": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Status code is 200": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				443
+			],
+			"allTests": [
+				{
+					"Response body is not empty": true,
+					"Status code is 200": true
+				}
+			]
+		},
+		{
+			"id": "ef23b0ae-3ca8-40fc-8b78-e55ea414009d",
+			"name": "Products",
+			"url": "https://qa.demoshopping.ru/products",
+			"time": 428,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Статус-код 200": true,
+				"Ответ содержит массив продуктов": true,
+				"Проверка наличия обязательных полей": true
+			},
+			"testPassFailCounts": {
+				"Статус-код 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Ответ содержит массив продуктов": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Проверка наличия обязательных полей": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				428
+			],
+			"allTests": [
+				{
+					"Статус-код 200": true,
+					"Ответ содержит массив продуктов": true,
+					"Проверка наличия обязательных полей": true
+				}
+			]
+		},
+		{
+			"id": "0eb644a8-cf8b-444c-94d2-290a128d57d8",
+			"name": "find to product ID",
+			"url": "https://qa.demoshopping.ru/products/id/19819",
+			"time": 727,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Статус ответа 200": true,
+				"Тип контента - JSON": true
+			},
+			"testPassFailCounts": {
+				"Статус ответа 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Тип контента - JSON": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				727
+			],
+			"allTests": [
+				{
+					"Статус ответа 200": true,
+					"Тип контента - JSON": true
+				}
+			]
+		},
+		{
+			"id": "22cc7e95-f845-4b92-a5e3-dbacc5df68c2",
+			"name": "find by category",
+			"url": "https://qa.demoshopping.ru/products/FindByCategory?category=Laptops",
+			"time": 127,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Проверка кода ответа": true,
+				"Проверка значения поля": true,
+				"Проверка времени ответа": true
+			},
+			"testPassFailCounts": {
+				"Проверка кода ответа": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Проверка значения поля": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Проверка времени ответа": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				127
+			],
+			"allTests": [
+				{
+					"Проверка кода ответа": true,
+					"Проверка значения поля": true,
+					"Проверка времени ответа": true
+				}
+			]
+		},
+		{
+			"id": "7658432d-27b0-4c1e-a7e3-b46dff2e29ee",
+			"name": "refreshing of product",
+			"url": "https://qa.demoshopping.ru/products/id/19819",
+			"time": 139,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Статус-код равен 200": true,
+				"Тип контента - JSON": false
+			},
+			"testPassFailCounts": {
+				"Статус-код равен 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Тип контента - JSON": {
+					"pass": 0,
+					"fail": 1
+				}
+			},
+			"times": [
+				139
+			],
+			"allTests": [
+				{
+					"Статус-код равен 200": true,
+					"Тип контента - JSON": false
+				}
+			]
+		},
+		{
+			"id": "b2c8f926-bbfa-432e-aa58-29ca1f106288",
+			"name": "refreshing of product part",
+			"url": "https://qa.demoshopping.ru/products/id/19819",
+			"time": 122,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Check updated field": false,
+				"Статус код 200": true,
+				"Response contains updated data": false,
+				"Response time is less than 200ms": true
+			},
+			"testPassFailCounts": {
+				"Check updated field": {
+					"pass": 0,
+					"fail": 1
+				},
+				"Статус код 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Response contains updated data": {
+					"pass": 0,
+					"fail": 1
+				},
+				"Response time is less than 200ms": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				122
+			],
+			"allTests": [
+				{
+					"Check updated field": false,
+					"Статус код 200": true,
+					"Response contains updated data": false,
+					"Response time is less than 200ms": true
+				}
+			]
+		},
+		{
+			"id": "4e13cf8d-6d70-4cef-b30d-decb3cd98095",
+			"name": "delete product",
+			"url": "https://qa.demoshopping.ru/products/id/19819",
+			"time": 426,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Статус ответа 200": true,
+				"Проверка, что продукт был удален": true
+			},
+			"testPassFailCounts": {
+				"Статус ответа 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Проверка, что продукт был удален": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				426
+			],
+			"allTests": [
+				{
+					"Статус ответа 200": true,
+					"Проверка, что продукт был удален": true
+				}
+			]
+		}
+	],
+	"count": 1,
+	"totalTime": 2412,
+	"collection": {
+		"requests": [
+			{
+				"id": "7c4eeaff-743e-4358-be8a-74d479368d82",
+				"method": "POST"
+			},
+			{
+				"id": "ef23b0ae-3ca8-40fc-8b78-e55ea414009d",
+				"method": "GET"
+			},
+			{
+				"id": "0eb644a8-cf8b-444c-94d2-290a128d57d8",
+				"method": "GET"
+			},
+			{
+				"id": "22cc7e95-f845-4b92-a5e3-dbacc5df68c2",
+				"method": "GET"
+			},
+			{
+				"id": "7658432d-27b0-4c1e-a7e3-b46dff2e29ee",
+				"method": "PUT"
+			},
+			{
+				"id": "b2c8f926-bbfa-432e-aa58-29ca1f106288",
+				"method": "PATCH"
+			},
+			{
+				"id": "4e13cf8d-6d70-4cef-b30d-decb3cd98095",
+				"method": "DELETE"
+			}
+		]
+	}
+}
