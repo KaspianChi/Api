@@ -1,0 +1,2567 @@
+{
+	"info": {
+		"_postman_id": "216f52c6-d528-46fa-8808-02b47835cfc9",
+		"name": "Demoshoppping",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "40956819",
+		"_collection_link": "https://www.postman.com/cryosat-geoscientist-76682818/workspace/demoshopping/collection/40956819-216f52c6-d528-46fa-8808-02b47835cfc9?action=share&source=collection_link&creator=40956819"
+	},
+	"item": [
+		{
+			"name": "Products",
+			"item": [
+				{
+					"name": "add products",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response body is not empty\", function () {\r",
+									"    pm.expect(pm.response.text()).to.not.be.empty;\r",
+									"});\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Получаем текст ответа\r",
+									"var responseText = pm.response.text();\r",
+									"\r",
+									"// Извлечение ID из текста ответа\r",
+									"var idMatch = responseText.match(/ID:\\s*(\\d+)/) || responseText.match(/с ID:\\s*(\\d+)/); // Регулярное выражение для поиска ID\r",
+									"\r",
+									"if (idMatch && idMatch[1]) {\r",
+									"    var productId = idMatch[1]; // Извлекаем ID\r",
+									"    pm.environment.set(\"productId\", productId); // Сохраняем ID в переменной окружения\r",
+									"    console.log(\"Сохраненный ID продукта:\", productId); // Выводим ID в консоль\r",
+									"} else {\r",
+									"    console.error(\"ID не найден в ответе:\", responseText); // Сообщаем об ошибке, если ID не найден\r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.variables.set(\"price\",_.random (100, 1500));\r",
+									"\r",
+									"// Список возможных категорий\r",
+									"const categories = [\"Laptops\", \"Watches\", \"Phones\"];\r",
+									"// Генерация случайного индекса\r",
+									"const randomIndex = Math.floor(Math.random() * categories.length);\r",
+									"// Выбор случайной категории\r",
+									"const randomCategory = categories[randomIndex];\r",
+									"// Сохранение значения в переменную\r",
+									"pm.environment.set(\"randomCategory\", randomCategory);\r",
+									"\r",
+									"// Генерация случайного числа: 0 или 1\r",
+									"const randomBoolean = Math.random() < 0.5; // true с вероятностью 50%, иначе false\r",
+									"// Сохранение значения в переменную\r",
+									"pm.environment.set(\"freeShipping\", randomBoolean);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"{{$randomWord}}\",\r\n  \"description\": \"{{$randomWords}}\",\r\n  \"price\": {{price}},\r\n  \"category\": \"{{randomCategory}}\",\r\n  \"manufacturer\": \"{{$randomWord}}\",\r\n  \"imageUrl\": \"{{$randomAbstractImage}}\",\r\n  \"freeShipping\": {{freeShipping}}\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}add-product",
+							"host": [
+								"{{base_url}}add-product"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "add products code 400",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"pm.test(\"Response body contains error message\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.error).to.exist; \r",
+									"    // Проверяет, что поле error существует\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"-11-1-Varous product\",\r\n  \"description\": \"This is an example product.\",\r\n  \"category\": \"Watches\",\r\n  \"manufacturer\": \"Xiaomi\",\r\n  \"imageUrl\": \"http://example.com/image.jpg\",\r\n  \"freeShipping\": Fasle\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}add-product",
+							"host": [
+								"{{base_url}}add-product"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Products",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Статус-код 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Ответ содержит массив продуктов\", function () {\r",
+									"    pm.expect(pm.response.json()).to.be.an('array');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Проверка наличия обязательных полей\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    jsonData.forEach(product => {\r",
+									"        pm.expect(product).to.have.property('category');\r",
+									"        pm.expect(product).to.have.property('name');\r",
+									"        pm.expect(product).to.have.property('price');\r",
+									"    });\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}products",
+							"host": [
+								"{{base_url}}products"
+							],
+							"query": [
+								{
+									"key": "product_id",
+									"value": "18964",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "find to product ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Статус ответа 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test(\"Тип контента - JSON\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\", \"application/json; charset=utf-8\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}products/id/{{productId}}",
+							"host": [
+								"{{base_url}}products"
+							],
+							"path": [
+								"id",
+								"{{productId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "find to product ID code 404",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}products/id/1751376543",
+							"host": [
+								"{{base_url}}products"
+							],
+							"path": [
+								"id",
+								"1751376543"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "find by category",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Проверка кода ответа\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Проверка значения поля\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData[0]).to.have.property('category').that.equals('Laptops');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Проверка времени ответа\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}products/FindByCategory?category=Laptops",
+							"host": [
+								"{{base_url}}products"
+							],
+							"path": [
+								"FindByCategory"
+							],
+							"query": [
+								{
+									"key": "category",
+									"value": "Laptops"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "find by category code 404",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}products/FindByCategory?category=Samsung",
+							"host": [
+								"{{base_url}}products"
+							],
+							"path": [
+								"FindByCategory"
+							],
+							"query": [
+								{
+									"key": "category",
+									"value": "Samsung"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "find by manufacturer",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}products/FindByManufacturer?manufacturer=Apple",
+							"host": [
+								"{{base_url}}products"
+							],
+							"path": [
+								"FindByManufacturer"
+							],
+							"query": [
+								{
+									"key": "manufacturer",
+									"value": "Apple"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "find by manufacturer Code 404",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}products/FindByManufacturer?manufacturer=Laptops",
+							"host": [
+								"{{base_url}}products"
+							],
+							"path": [
+								"FindByManufacturer"
+							],
+							"query": [
+								{
+									"key": "manufacturer",
+									"value": "Laptops"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "find by free shipping",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}products/FindByShipping?freeShipping=false",
+							"host": [
+								"{{base_url}}products"
+							],
+							"path": [
+								"FindByShipping"
+							],
+							"query": [
+								{
+									"key": "freeShipping",
+									"value": "true",
+									"disabled": true
+								},
+								{
+									"key": "freeShipping",
+									"value": "false"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "find by free shipping code 404",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}products/FindByShipping?freeShipping=watches",
+							"host": [
+								"{{base_url}}products"
+							],
+							"path": [
+								"FindByShipping"
+							],
+							"query": [
+								{
+									"key": "freeShipping",
+									"value": "true",
+									"disabled": true
+								},
+								{
+									"key": "freeShipping",
+									"value": "Laptops",
+									"disabled": true
+								},
+								{
+									"key": "freeShipping",
+									"value": "watches"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "filtration",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}products/filter?category=Watches&freeShipping=true&minPrice=150&maxPrice=850",
+							"host": [
+								"{{base_url}}products"
+							],
+							"path": [
+								"filter"
+							],
+							"query": [
+								{
+									"key": "category",
+									"value": "Laptops",
+									"disabled": true
+								},
+								{
+									"key": "category",
+									"value": "Watches"
+								},
+								{
+									"key": "category",
+									"value": "Tablets",
+									"disabled": true
+								},
+								{
+									"key": "manufacturer",
+									"value": "Apple",
+									"disabled": true
+								},
+								{
+									"key": "manufacturer",
+									"value": "Xiaomi",
+									"disabled": true
+								},
+								{
+									"key": "manufacturer",
+									"value": "Huawei",
+									"disabled": true
+								},
+								{
+									"key": "freeShipping",
+									"value": "true"
+								},
+								{
+									"key": "freeShipping",
+									"value": "false",
+									"disabled": true
+								},
+								{
+									"key": "minPrice",
+									"value": "150"
+								},
+								{
+									"key": "maxPrice",
+									"value": "850"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "filtration Code 500",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}products/filter?category=Lada sedan&category=Tablets&manufacturer=Apple&manufacturer=Xiaomi&manufacturer=Huawei&freeShipping=true&freeShipping=false&maxPrice=850&minPrice=00&category=Watches",
+							"host": [
+								"{{base_url}}products"
+							],
+							"path": [
+								"filter"
+							],
+							"query": [
+								{
+									"key": "category",
+									"value": "Lada sedan"
+								},
+								{
+									"key": "category",
+									"value": "Tablets"
+								},
+								{
+									"key": "manufacturer",
+									"value": "Apple"
+								},
+								{
+									"key": "manufacturer",
+									"value": "Xiaomi"
+								},
+								{
+									"key": "manufacturer",
+									"value": "Huawei"
+								},
+								{
+									"key": "freeShipping",
+									"value": "true"
+								},
+								{
+									"key": "freeShipping",
+									"value": "false"
+								},
+								{
+									"key": "maxPrice",
+									"value": "850"
+								},
+								{
+									"key": "minPrice",
+									"value": "00"
+								},
+								{
+									"key": "category",
+									"value": "Watches"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "refreshing of product",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Статус-код равен 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Тип контента - JSON\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\", \"application/json\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"string\",\r\n  \"description\": \"string\",\r\n  \"price\": 0,\r\n  \"category\": \"string\",\r\n  \"manufacturer\": \"string\",\r\n  \"imageUrl\": \"string\",\r\n  \"freeShipping\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}products/id/{{productId}}",
+							"host": [
+								"{{base_url}}products"
+							],
+							"path": [
+								"id",
+								"{{productId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "refreshing od product code 404",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"string\",\r\n  \"description\": \"string\",\r\n  \"price\": 0,\r\n  \"category\": \"string\",\r\n  \"manufacturer\": \"string\",\r\n  \"imageUrl\": \"string\",\r\n  \"freeShipping\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}products/id/454660",
+							"host": [
+								"{{base_url}}products"
+							],
+							"path": [
+								"id",
+								"454660"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "refreshing of product code 400",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"string\",\r\n  \"description\": \"string\",\r\n  \"price\": 0,\r\n  \"category\": \"string\",\r\n  \"manufacturer\": \"string\",\r\n  \"imageUrl\": \"string\",\r\n  \"freeShipping\": true\r\n  \"nestor\": \"mahno\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}products/id/{{productId}}",
+							"host": [
+								"{{base_url}}products"
+							],
+							"path": [
+								"id",
+								"{{productId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "refreshing of product part",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Check updated field\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.fieldName).to.eql(\"newValue\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Статус код 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response contains updated data\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData).to.include.keys('id', 'fieldName');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 200ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"string\",\r\n  \"description\": \"string\",\r\n  \"price\": 0,\r\n  \"category\": \"string\",\r\n  \"manufacturer\": \"string\",\r\n  \"imageUrl\": \"string\",\r\n  \"freeShipping\": false\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}products/id/{{productId}}",
+							"host": [
+								"{{base_url}}products"
+							],
+							"path": [
+								"id",
+								"{{productId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "refreshing of product part Code 400",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"string\",\r\n  \"description\": \"string\",\r\n  \"price\": 0,\r\n  \"category\": \"string\",\r\n  \"manufacturer\": \"string\",\r\n  \"imageUrl\": \"string\",\r\n  \"freeShipping\": true\r\n  \"nestor\": \"mahno\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}products/id/{{productId}}",
+							"host": [
+								"{{base_url}}products"
+							],
+							"path": [
+								"id",
+								"{{productId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "refreshing of product part Code 404",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"string\",\r\n  \"description\": \"string\",\r\n  \"price\": 0,\r\n  \"category\": \"string\",\r\n  \"manufacturer\": \"string\",\r\n  \"imageUrl\": \"string\",\r\n  \"freeShipping\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}products/id/454660",
+							"host": [
+								"{{base_url}}products"
+							],
+							"path": [
+								"id",
+								"454660"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete product",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Статус ответа 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Проверка, что продукт был удален\", function () {\r",
+									"    // Проверяем, что продукт больше не существует\r",
+									"    pm.sendRequest({\r",
+									"        url: `{{base_url}}products/id/{{productId}}`,\r",
+									"        method: 'GET'\r",
+									"    }, function (err, res) {\r",
+									"        pm.expect(res).to.have.status(404); // Ожидаем 404, если продукт удален\r",
+									"    });\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}products/id/{{productId}}",
+							"host": [
+								"{{base_url}}products"
+							],
+							"path": [
+								"id",
+								"{{productId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete product code 403",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}products/id/11",
+							"host": [
+								"{{base_url}}products"
+							],
+							"path": [
+								"id",
+								"11"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete product code 404",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}products/id/454660",
+							"host": [
+								"{{base_url}}products"
+							],
+							"path": [
+								"id",
+								"454660"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"username\": \"Kastor20\",\r\n  \"password\": \"Polidevk20\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}login?username=Kastor20&password=Polidevk20",
+							"host": [
+								"{{base_url}}login"
+							],
+							"query": [
+								{
+									"key": "username",
+									"value": "Kastor20"
+								},
+								{
+									"key": "password",
+									"value": "Polidevk20"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Code 400",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"username\": \"Kastor20\",\r\n  \"password\": \"Polidevk20\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}login?username=Kastor20&password=Polidevk18",
+									"host": [
+										"{{base_url}}login"
+									],
+									"query": [
+										{
+											"key": "username",
+											"value": "Kastor20"
+										},
+										{
+											"key": "password",
+											"value": "Polidevk18"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Server",
+									"value": "nginx/1.24.0 (Ubuntu)"
+								},
+								{
+									"key": "Date",
+									"value": "Sat, 18 Jan 2025 18:04:45 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "206"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"ce-64he40NA0IkO2Z/mgKV9j/yhQoc\""
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"Вход выполнен успешно\",\n    \"token\": \"{{vault:json-web-token}}\"\n}"
+						}
+					]
+				},
+				{
+					"name": "login / Code400",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authorization-secret}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"username\": \"Kastor20\",\r\n  \"password\": \"Polidevk18\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}login?username=Kastor20&password=Polidevk18",
+							"host": [
+								"{{base_url}}login"
+							],
+							"query": [
+								{
+									"key": "username",
+									"value": "Kastor20"
+								},
+								{
+									"key": "password",
+									"value": "Polidevk18"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Register",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									" let currentNumber = parseInt(pm.environment.get(\"userNumber\"), 10);\r",
+									"     pm.environment.set(\"userNumber\", currentNumber + 1);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"username\": \"Kastor{{userNumber}}\",\r\n  \"password\": \"{{password}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}register",
+							"host": [
+								"{{base_url}}register"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "code 400",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"username\": \"Kastor25\",\r\n  \"password\": \"{{password}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}register",
+									"host": [
+										"{{base_url}}register"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Server",
+									"value": "nginx/1.24.0 (Ubuntu)"
+								},
+								{
+									"key": "Date",
+									"value": "Sat, 18 Jan 2025 18:22:56 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "70"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"46-oOnYsXmLhkIPR/YhoV2LHOPaYO8\""
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"Регистрация выполнена успешно\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Adding a new user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									" let currentNumber = parseInt(pm.environment.get(\"userNumber\"), 10);\r",
+									"     pm.environment.set(\"userNumber\", currentNumber + 1);\r",
+									"// Проверка статус-кода 200\r",
+									"pm.test(\"Статус-код равен 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"var responseText = pm.response.text();\r",
+									"// Проверка текста ответа на наличие сообщения об успешном добавлении пользователя с ID\r",
+									"pm.test(\"Ответ содержит сообщение об успешном добавлении пользователя\", function () {\r",
+									"    pm.expect(responseText).to.include(\"Пользователь успешно добавлен с ID:\"); // Проверяем наличие сообщения\r",
+									"});\r",
+									"\r",
+									"// Извлечение ID из текста ответа и сохранение его в переменную окружения\r",
+									"var idMatch = responseText.match(/ID: (\\d+)/); // Используем регулярное выражение для извлечения ID\r",
+									"\r",
+									"if (idMatch && idMatch[1]) {\r",
+									"    pm.environment.set(\"userId\", idMatch[1]); // Сохраняем ID в переменную userId\r",
+									"}\r",
+									"\r",
+									"// Получаем текст ответа\r",
+									"var responseText = pm.response.text();"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"username\": \"Kastor{{userNumber}}\",\r\n  \"password\": \"{{password}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}users",
+							"host": [
+								"{{base_url}}users"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "code 400",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"username\": \"{{userNumber}}\",\r\n  \"password\": \"{{password}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}users",
+									"host": [
+										"{{base_url}}users"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "html",
+							"header": [
+								{
+									"key": "Server",
+									"value": "nginx/1.24.0 (Ubuntu)"
+								},
+								{
+									"key": "Date",
+									"value": "Sat, 18 Jan 2025 18:26:23 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "text/html; charset=utf-8"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"44-UkHwW3n0ef5yfSIRTzqcYNfDLqo\""
+								},
+								{
+									"key": "Content-Encoding",
+									"value": "gzip"
+								}
+							],
+							"cookie": [],
+							"body": "Пользователь успешно добавлен с ID: 1831"
+						}
+					]
+				},
+				{
+					"name": "Id users and logins",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}users",
+							"host": [
+								"{{base_url}}users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete user",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}users/1837",
+							"host": [
+								"{{base_url}}users"
+							],
+							"path": [
+								"1837"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Cart",
+			"item": [
+				{
+					"name": "adding an item",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authorization-secret}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"productId\": \"1\",\r\n  \"quantity\": 5\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}cart",
+							"host": [
+								"{{base_url}}cart"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Code 500",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"productId\": \"454660\",\r\n  \"quantity\": 5\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}cart",
+									"host": [
+										"{{base_url}}cart"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "html",
+							"header": [
+								{
+									"key": "Server",
+									"value": "nginx/1.24.0 (Ubuntu)"
+								},
+								{
+									"key": "Date",
+									"value": "Sat, 18 Jan 2025 19:14:31 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "text/html; charset=utf-8"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"52-2DoVW7deJLiTyRwWUf+eCwVJ9kI\""
+								},
+								{
+									"key": "Content-Encoding",
+									"value": "gzip"
+								}
+							],
+							"cookie": [],
+							"body": "Товар добавлен в корзину пользователя с ID: 1183"
+						},
+						{
+							"name": "Code 400",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"productId\": 454660,\r\n  \"quantity\": 5\r\n\t\"nestor\": \"mahno\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}cart",
+									"host": [
+										"{{base_url}}cart"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "html",
+							"header": [
+								{
+									"key": "Server",
+									"value": "nginx/1.24.0 (Ubuntu)"
+								},
+								{
+									"key": "Date",
+									"value": "Sat, 18 Jan 2025 19:14:31 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "text/html; charset=utf-8"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"52-2DoVW7deJLiTyRwWUf+eCwVJ9kI\""
+								},
+								{
+									"key": "Content-Encoding",
+									"value": "gzip"
+								}
+							],
+							"cookie": [],
+							"body": "Товар добавлен в корзину пользователя с ID: 1183"
+						}
+					]
+				},
+				{
+					"name": "adding an item Code 401",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"productId\": {{productID}},\r\n  \"quantity\": 5\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}cart",
+							"host": [
+								"{{base_url}}cart"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Code 500",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"productId\": \"454660\",\r\n  \"quantity\": 5\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}cart",
+									"host": [
+										"{{base_url}}cart"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "html",
+							"header": [
+								{
+									"key": "Server",
+									"value": "nginx/1.24.0 (Ubuntu)"
+								},
+								{
+									"key": "Date",
+									"value": "Sat, 18 Jan 2025 19:14:31 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "text/html; charset=utf-8"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"52-2DoVW7deJLiTyRwWUf+eCwVJ9kI\""
+								},
+								{
+									"key": "Content-Encoding",
+									"value": "gzip"
+								}
+							],
+							"cookie": [],
+							"body": "Товар добавлен в корзину пользователя с ID: 1183"
+						}
+					]
+				},
+				{
+					"name": "Get Cart",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}getCart",
+							"host": [
+								"{{base_url}}getCart"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Cart itemID",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n   \"quantity\": 45\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}cart/12724",
+							"host": [
+								"{{base_url}}cart"
+							],
+							"path": [
+								"12724"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "code 400",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n   \"quantity\": mahno\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}cart/12724",
+									"host": [
+										"{{base_url}}cart"
+									],
+									"path": [
+										"12724"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Server",
+									"value": "nginx/1.24.0 (Ubuntu)"
+								},
+								{
+									"key": "Date",
+									"value": "Sat, 18 Jan 2025 19:36:00 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "84"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"54-tBRUK0n3y96IHmsmhePj6GZ4E/0\""
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"Количество товара в корзине обновлено\"\n}"
+						},
+						{
+							"name": "code 404",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n   \"quantity\": 45\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}cart/1272445",
+									"host": [
+										"{{base_url}}cart"
+									],
+									"path": [
+										"1272445"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Server",
+									"value": "nginx/1.24.0 (Ubuntu)"
+								},
+								{
+									"key": "Date",
+									"value": "Sat, 18 Jan 2025 19:36:00 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "84"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"54-tBRUK0n3y96IHmsmhePj6GZ4E/0\""
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"Количество товара в корзине обновлено\"\n}"
+						},
+						{
+							"name": "code 500",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n   \"itemID\": : \"nestor_mahno\",\r\n   \"quantity\": 45\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}cart/12724",
+									"host": [
+										"{{base_url}}cart"
+									],
+									"path": [
+										"12724"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Server",
+									"value": "nginx/1.24.0 (Ubuntu)"
+								},
+								{
+									"key": "Date",
+									"value": "Sat, 18 Jan 2025 19:36:00 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "84"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"54-tBRUK0n3y96IHmsmhePj6GZ4E/0\""
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"Количество товара в корзине обновлено\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Cart itemID Code 401",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n   \"quantity\": 45\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}cart/12724",
+							"host": [
+								"{{base_url}}cart"
+							],
+							"path": [
+								"12724"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "code 400",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n   \"quantity\": mahno\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}cart/12724",
+									"host": [
+										"{{base_url}}cart"
+									],
+									"path": [
+										"12724"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Server",
+									"value": "nginx/1.24.0 (Ubuntu)"
+								},
+								{
+									"key": "Date",
+									"value": "Sat, 18 Jan 2025 19:36:00 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "84"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"54-tBRUK0n3y96IHmsmhePj6GZ4E/0\""
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"Количество товара в корзине обновлено\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Deleting an item",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}cart/12724",
+							"host": [
+								"{{base_url}}cart"
+							],
+							"path": [
+								"12724"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "code 404",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}cart/1272445",
+									"host": [
+										"{{base_url}}cart"
+									],
+									"path": [
+										"1272445"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "html",
+							"header": [
+								{
+									"key": "Server",
+									"value": "nginx/1.24.0 (Ubuntu)"
+								},
+								{
+									"key": "Date",
+									"value": "Sat, 18 Jan 2025 20:14:07 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "text/html; charset=utf-8"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"38-8mWoSq4N4p7nW+sR0TT4FBTFyUw\""
+								},
+								{
+									"key": "Content-Encoding",
+									"value": "gzip"
+								}
+							],
+							"cookie": [],
+							"body": "Товар с ID: 12724 удален из корзины"
+						}
+					]
+				},
+				{
+					"name": "Deleting an item Code 401",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}cart/12724",
+							"host": [
+								"{{base_url}}cart"
+							],
+							"path": [
+								"12724"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "code 404",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}cart/1272445",
+									"host": [
+										"{{base_url}}cart"
+									],
+									"path": [
+										"1272445"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "html",
+							"header": [
+								{
+									"key": "Server",
+									"value": "nginx/1.24.0 (Ubuntu)"
+								},
+								{
+									"key": "Date",
+									"value": "Sat, 18 Jan 2025 20:14:07 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "text/html; charset=utf-8"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"38-8mWoSq4N4p7nW+sR0TT4FBTFyUw\""
+								},
+								{
+									"key": "Content-Encoding",
+									"value": "gzip"
+								}
+							],
+							"cookie": [],
+							"body": "Товар с ID: 12724 удален из корзины"
+						}
+					]
+				},
+				{
+					"name": "Cart itemID code 404",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authorization-secret}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n   \"ID\": \"454660456820\",\r\n   \"quantity\": 45\r\n   \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}cart/12724789321",
+							"host": [
+								"{{base_url}}cart"
+							],
+							"path": [
+								"12724789321"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{base_url}}cart",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authorization-secret}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"productId\": \"{{productID}}\",\r\n  \"quantity\": 5\r\n  \"nestor\": \"mahno\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}cart",
+							"host": [
+								"{{base_url}}cart"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{base_url}}cart",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authorization-secret}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"productId\": \"454660\",\r\n  \"quantity\": 5\r\n  \"nestor\": \"mahno\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}cart",
+							"host": [
+								"{{base_url}}cart"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{base_url}}cart",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authorization-secret}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"productId\": \"{{password}}\",\r\n    \"quantity\": \"5\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}cart",
+							"host": [
+								"{{base_url}}cart"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Orders",
+			"item": [
+				{
+					"name": "creating an order",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}orders",
+							"host": [
+								"{{base_url}}orders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "creating an order Code 401",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}orders",
+							"host": [
+								"{{base_url}}orders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "user orders",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Получаем текст ответа\r",
+									"var responseText = responseBody;\r",
+									"\r",
+									"// Разбиваем текст на массив по символу \"\r",
+									"var arr = responseText.split(\"\\\"\");\r",
+									"\r",
+									"// Предполагаем, что номер заказа находится на позиции 1\r",
+									"var orderId = arr[1];\r",
+									"\r",
+									"// Сохраняем номер заказа в переменную окружения\r",
+									"postman.setEnvironmentVariable(\"order_id\", orderId);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}user-orders",
+							"host": [
+								"{{base_url}}user-orders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "user orders Code 401",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}user-orders",
+							"host": [
+								"{{base_url}}user-orders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Refreshing quantity of items",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"quantity\": 8\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}orders/3878/products/1",
+							"host": [
+								"{{base_url}}orders"
+							],
+							"path": [
+								"3878",
+								"products",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Refreshing quantity of items Code 401",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"quantity\": 8\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}orders/3878/products/1",
+							"host": [
+								"{{base_url}}orders"
+							],
+							"path": [
+								"3878",
+								"products",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Refreshing quantity of items Code 400",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"quantity\": number\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}orders/3878/products/1",
+							"host": [
+								"{{base_url}}orders"
+							],
+							"path": [
+								"3878",
+								"products",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Refreshing quantity of items Code 404",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"quantity\": 8\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}orders/38789/products/45",
+							"host": [
+								"{{base_url}}orders"
+							],
+							"path": [
+								"38789",
+								"products",
+								"45"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Updates orders",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}update-orders-total",
+							"host": [
+								"{{base_url}}update-orders-total"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Updates orders Code 401",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}update-orders-total",
+							"host": [
+								"{{base_url}}update-orders-total"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "orders history",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}api/orders-history",
+							"host": [
+								"{{base_url}}api"
+							],
+							"path": [
+								"orders-history"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "orders history Code 401",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}api/orders-history",
+							"host": [
+								"{{base_url}}api"
+							],
+							"path": [
+								"orders-history"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Payment",
+			"item": [
+				{
+					"name": "update Balances",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}updateBalances",
+							"host": [
+								"{{base_url}}updateBalances"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Pay order",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"card_type\": \"VISA\",\r\n  \"card_code\": \"8820354696467284\",\r\n  \"expiry_month\": 12,\r\n  \"expiry_year\": 26,\r\n  \"cvv\": \"123\",\r\n  \"email\": \"user@example.com\",\r\n  \"email_paypal\": \"valid@email.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}pay",
+							"host": [
+								"{{base_url}}pay"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Pay order Code 404",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"card_type\": \"MasterCArd\",\r\n  \"card_code\": \"8820354696467284\",\r\n  \"expiry_month\": 12,\r\n  \"expiry_year\": 26,\r\n  \"cvv\": \"123\",\r\n  \"email\": \"user@example.com\",\r\n  \"email_paypal\": \"valid@email.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}pay",
+							"host": [
+								"{{base_url}}pay"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Pay order Code 401",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"card_type\": \"VISA\",\r\n  \"card_code\": \"8820354696467284\",\r\n  \"expiry_month\": 12,\r\n  \"expiry_year\": 26,\r\n  \"cvv\": \"123\",\r\n  \"email\": \"user@example.com\",\r\n  \"email_paypal\": \"valid@email.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}pay",
+							"host": [
+								"{{base_url}}pay"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Database",
+			"item": [
+				{
+					"name": "Database query",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}api/reset-database",
+							"host": [
+								"{{base_url}}api"
+							],
+							"path": [
+								"reset-database"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"{{username}}\",\r\n    \"password\": \"{{password}}\" \r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}login",
+					"host": [
+						"{{base_url}}login"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{authorization-secret}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "",
+			"disabled": true
+		},
+		{
+			"key": "username",
+			"value": "",
+			"disabled": true
+		},
+		{
+			"key": "password",
+			"value": "",
+			"disabled": true
+		},
+		{
+			"key": "authorization-secret",
+			"value": "",
+			"disabled": true
+		}
+	]
+}
